@@ -1,6 +1,8 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
+import { toast } from 'react-hot-toast';
+/* import api from '../../api/api'; */
 import axios from 'axios';
-axios.defaults.baseURL = 'https://project-smart-coders-backend.onrender.com';
+axios.defaults.baseURL = 'http://localhost:8000/';
 
 const handleResponse = (response, errorMessage) => {
   if (response.status !== 200) {
@@ -22,7 +24,7 @@ export const getAllTasks = createAsyncThunk(
         'Failed to fetch tasks due to server error'
       );
     } catch (error) {
-      console.error(`Failed to fetch all tasks: ${error.message}`);
+      toast.error(`Failed to fetch all tasks: ${error.message}`);
       return thunkAPI.rejectWithValue(error.message);
     }
   }
@@ -40,7 +42,7 @@ export const addTask = createAsyncThunk(
 
       return response.data;
     } catch (error) {
-      console.error(`Failed to add task: ${error.message}`);
+      toast.error(`Failed to add task: ${error.message}`);
       return thunkAPI.rejectWithValue(error.message);
     }
   }
@@ -56,9 +58,10 @@ export const deleteTask = createAsyncThunk(
         throw new Error('Failed to delete task due to server error');
       }
 
+      toast.success('Task deleted successfully');
       return taskId;
     } catch (error) {
-      console.error(`Sorry, task wasn't deleted: ${error.message}`);
+      toast.error(`Sorry, task wasn’t deleted: ${error.message}`);
       return thunkAPI.rejectWithValue(error.message);
     }
   }
@@ -66,17 +69,18 @@ export const deleteTask = createAsyncThunk(
 
 export const patchTask = createAsyncThunk(
   'tasks/updateTask',
-  async ({ taskId, changedTask }, thunkAPI) => {
+  async ({ id, task }, thunkAPI) => {
     try {
-      const response = await axios.patch(`tasks/${taskId}`, changedTask);
+      const response = await axios.patch(`tasks/${id}`, task);
 
       if (response.status !== 200) {
         throw new Error('Failed to update task due to server error');
       }
 
+      toast.success('Task has been successfully corrected');
       return response.data;
     } catch (error) {
-      console.error(`Sorry, something went wrong: ${error.message}`);
+      toast.error(`Sorry, something went wrong: ${error.message}`);
       return thunkAPI.rejectWithValue(error.message);
     }
   }

@@ -1,40 +1,40 @@
-import { createPortal } from 'react-dom';
 import { useEffect } from 'react';
-import * as s from './Modal.styled';
+import { createPortal } from 'react-dom';
+import * as SC from './Modal.styled';
+import { CloseIconSvg } from './CloseIcon';
 
-const ModalRoot = document.getElementById('modal-root');
-
-const Modal = ({ onClose, children }) => {
+export const Modal = ({ children, onToggleModal }) => {
   useEffect(() => {
     const handleKeyDown = e => {
       if (e.code === 'Escape') {
-        onClose();
+        onToggleModal();
       }
     };
-    window.addEventListener('keydown', handleKeyDown);
 
+    window.addEventListener('keydown', handleKeyDown);
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [onClose]);
+  }, [onToggleModal]);
 
-  const handleBackdropClick = e => {
-    if (e.currentTarget === e.target) {
-      onClose();
+  const onBackdropClick = e => {
+    if (e.target === e.currentTarget) {
+      onToggleModal();
     }
   };
 
   return createPortal(
-    <s.Backdrop onClick={handleBackdropClick}>
-      <s.ModalField>
-        <s.CloseButton onClick={onClose}>
-          <s.IconBtn />
-        </s.CloseButton>
+    <SC.ModalBackdrop onClick={onBackdropClick}>
+      <SC.ModalContent>
+        <CloseIconSvg
+          color="var(--first-Text-Color)"
+          hoverColor="var(--fourth-Bckg-Color)"
+          size={24}
+          onClick={onToggleModal}
+        />
         {children}
-      </s.ModalField>
-    </s.Backdrop>,
-    ModalRoot
+      </SC.ModalContent>
+    </SC.ModalBackdrop>,
+    document.querySelector('#modal-root')
   );
 };
-
-export default Modal;

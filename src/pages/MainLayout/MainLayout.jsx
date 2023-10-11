@@ -1,75 +1,69 @@
-import { useState, useEffect } from 'react';
+import { Suspense } from 'react';
 import { Outlet } from 'react-router-dom';
-
-import { Container } from 'stylesheet/Container.styled';
+import {
+  MainContainer,
+  ContentWrapper,
+  ContentInnerBox,
+} from './MainLayout.styled';
 import SideBar from 'components/SideBar/SideBar';
 import Header from 'components/Header/Header';
+import { Loader } from 'components/Loader/Loader';
+import useAuth from 'hooks/useAuth';
+import { useState, useEffect, useCallback } from 'react';
+import { useMediaQuery } from 'react-responsive';
 
-import { globalTheme } from 'theme';
+const MainLayout = () => {
+  const { isLoggedIn } = useAuth();
+  const [isSideBarOpened, setIsSideBarOpened] = useState(false);
+  const isDesktop = useMediaQuery({ minWidth: 1440 });
 
-import * as s from './MainLayoutStyled.styled';
+  function addScrollLock() {
+    document.body.classList.add('add-scroll-lock');
+  }
 
-export default function MainLayout() {
-  const mediaQuery = window.matchMedia(
-    `(min-width: ${globalTheme.breakpoints.desktop})`
-  );
+  function removeScrollLock() {
+    document.body.classList.remove('add-scroll-lock');
+  }
 
-  const [showSideBar, setShowSideBar] = useState(mediaQuery.matches);
-  const [shownBurger, setShowBurger] = useState(true);
+  function openSideBar() {
+    setIsSideBarOpened(true);
+    addScrollLock();
+  }
+
+  const closeSideBar = useCallback(() => {
+    setIsSideBarOpened(false);
+    removeScrollLock();
+  }, []);
 
   useEffect(() => {
-    const handleResize = evt => {
-      setShowSideBar(evt.matches);
-      console.log('handleResize', evt.matches);
-    };
-
-    mediaQuery.addEventListener('change', handleResize);
-
-    return () => {
-      mediaQuery.removeEventListener('change', handleResize);
-    };
-  }, [mediaQuery, showSideBar]);
-
-  const onSideBar = () => {
-    setShowSideBar(prevState => !prevState);
-  };
-
-  const togglshownBurger = () => {
-    setShowBurger(prevState => !prevState);
-  };
-
-  const onRedirect = () => {
-    setShowSideBar(false);
-    togglshownBurger();
-  };
+    if (isDesktop) {
+      closeSideBar();
+    }
+  }, [isDesktop, closeSideBar]);
 
   return (
     <>
-      {(mediaQuery.matches || showSideBar) && (
-        <SideBar
-          togglshownBurger={togglshownBurger}
-          onSideBar={onSideBar}
-          onRedirect={onRedirect}
-        />
+      {isLoggedIn && (
+        <MainContainer>
+          <SideBar
+            isSideBarOpened={isSideBarOpened}
+            closeSideBar={closeSideBar}
+          />
+          <ContentWrapper>
+            <ContentInnerBox>
+              <Header
+                isSideBarOpened={isSideBarOpened}
+                openSideBar={openSideBar}
+              />
+              <Suspense fallback={<Loader />}>
+                <Outlet />
+              </Suspense>
+            </ContentInnerBox>
+          </ContentWrapper>
+        </MainContainer>
       )}
-      <s.SectionHeader>
-        <Container>
-          <s.DivStyled>
-            <Header
-              shownBurger={shownBurger}
-              togglshownBurger={togglshownBurger}
-              onSideBar={onSideBar}
-            />
-          </s.DivStyled>
-        </Container>
-      </s.SectionHeader>
-      <s.Section>
-        <Container>
-          <s.DivStyled>
-            <Outlet />
-          </s.DivStyled>
-        </Container>
-      </s.Section>
     </>
   );
-}
+};
+
+export default MainLayout;

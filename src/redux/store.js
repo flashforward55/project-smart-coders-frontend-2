@@ -1,7 +1,8 @@
 import { configureStore } from '@reduxjs/toolkit';
-import persistStore from 'redux-persist/es/persistStore';
-
+import storage from 'redux-persist/lib/storage';
 import {
+  persistStore,
+  persistReducer,
   FLUSH,
   REHYDRATE,
   PAUSE,
@@ -10,26 +11,26 @@ import {
   REGISTER,
 } from 'redux-persist';
 
-import { authReducer } from './auth/authSlice';
-import { reviewsReducer } from './reviews/reviewsSlice';
-import { userSlice } from './user/userSlice';
+import { authReducer } from './auth/slice';
+import { reviewReducer } from './review/slice';
 import { tasksReducer } from './tasks/slice';
 
-import { initAuth } from './auth/initAuth';
-import { initUser } from './user/initUser';
+const authPersistConfig = {
+  key: 'auth',
+  storage,
+  whitelist: ['token' /* 'refreshToken'] */],
+};
 
-const initState = {
-  auth: initAuth,
-  user: initUser,
+const reviewPersistConfig = {
+  key: 'review',
+  storage,
+  whitelist: ['user'],
 };
 
 export const store = configureStore({
-  preloadedState: initState,
-  devTools: true,
   reducer: {
-    auth: authReducer,
-    user: userSlice.reducer,
-    reviews: reviewsReducer,
+    auth: persistReducer(authPersistConfig, authReducer),
+    review: persistReducer(reviewPersistConfig, reviewReducer),
     tasks: tasksReducer,
   },
   middleware: getDefaultMiddleware =>
@@ -38,6 +39,7 @@ export const store = configureStore({
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
     }),
+  devTools: process.env.NODE_ENV === 'development',
 });
 
 export const persistor = persistStore(store);

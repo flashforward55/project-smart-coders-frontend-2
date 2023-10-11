@@ -1,174 +1,141 @@
-import styled from 'styled-components';
-import { Form, ErrorMessage } from 'formik';
-import { globalTheme } from 'theme';
+import { Form } from 'formik';
+import { styled } from 'styled-components';
 
-export const FormWrapper = styled(Form)`
-  display: flex;
-  flex-direction: column;
-`;
-
-export const StarContainer = styled.div`
+export const FeedbackForm = styled(Form)`
   position: relative;
 `;
 
+export const CloseBtn = styled.div`
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 25px;
+  height: 25px;
+  cursor: pointer;
+  z-index: 10;
+  transition: all 0.3s;
+  &:hover {
+    transform: scale(1.1);
+  }
+`;
+
 export const Label = styled.label`
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 1;
-
-  color: ${props => props.theme.colors.modalFormLabel};
-`;
-
-export const ReviewInput = styled.textarea`
-  width: 100%;
-  min-height: 130px;
-  padding: 12px 14px;
-
-  font-family: ${globalTheme.fonts.fontsText};
-  font-weight: 600;
-  line-height: 1.25;
-
-  border-radius: 8px;
-  border: 1.5px solid;
-  resize: none;
-
-  color: ${props => props.theme.colors.secondText};
-  background-color: ${props => props.theme.colors.forthBackground};
-  border-color: ${props =>
-    props.error
-      ? `${globalTheme.colors.redError}`
-      : props.theme.colors.textareaBorder};
-`;
-
-export const ErrorContainer = styled(ErrorMessage)`
-  margin-top: 8px;
-
-  font-family: ${globalTheme.fonts.fontsText};
-  font-size: 12px;
-  font-weight: 400;
-  line-height: 1.16;
-
-  color: ${globalTheme.colors.redError};
-`;
-
-export const ReviewContainer = styled.div`
+  position: relative;
+  display: grid;
+  gap: 8px;
   margin-bottom: 14px;
+  color: var(--first-Feedback-Text-Color);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 14px;
 `;
 
-export const ContainerLabelAndBtn = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 8px;
-`;
-
-export const UpContainerButton = styled.div`
-  display: flex;
-  gap: 8px;
-`;
-
-export const EditButton = styled.button`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  width: 30px;
-  height: 30px;
-  padding: 12px center;
-
-  border-radius: 50px;
-  border: none;
-  cursor: pointer;
-
-  color: ${props =>
-    props['data-active']
-      ? `${globalTheme.colors.white}`
-      : `${globalTheme.colors.primary}`};
-  background-color: ${props =>
-    props['data-active']
-      ? `${globalTheme.colors.primary}`
-      : props.theme.colors.secondBackgroundButton};
-
-  &:hover {
-    color: ${globalTheme.colors.white};
-    background-color: ${globalTheme.colors.primary};
-    box-shadow: 4px 2px 16px 0px rgba(136, 165, 191, 0.48);
-  }
-`;
-
-export const DeleteButton = styled.button`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  padding: 12px auto;
-  width: 30px;
-  height: 30px;
-
-  border-radius: 50px;
-  border: none;
-  cursor: pointer;
-
-  color: ${globalTheme.colors.mainRed};
-  background-color: ${globalTheme.colors.bgDelBtn};
-
-  &:hover {
-    color: ${globalTheme.colors.white};
-    background: ${globalTheme.colors.mainRed};
-    box-shadow: ${globalTheme.shadow.modalHoverShadow};
-  }
-`;
-
-export const DownContainerButton = styled.div`
-  display: flex;
-  justify-content: space-between;
-  gap: 8px;
-`;
-
-export const ConfirmButton = styled.button`
+export const Textarea = styled.textarea`
   width: 100%;
   padding: 12px;
-
-  font-family: ${globalTheme.fonts.fontsText};
+  margin-top: 8px;
+  border-radius: 8px;
+  border: none;
+  resize: none;
   font-size: 14px;
   font-weight: 600;
-  line-height: 1.28;
-
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-
-  color: ${globalTheme.colors.white};
-  background-color: ${globalTheme.colors.secondary};
-  // // color: ${props => props.theme.colors.secondText};
-  // background-color: ${props => props.theme.colors.backgroundButton};
-
-  &:hover {
-    // color: ${globalTheme.colors.white};
-    // background-color: ${globalTheme.colors.secondary};
-    box-shadow: ${globalTheme.shadow.modalHoverShadow};
+  line-height: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: var(--second-Feedback-Text-Color);
+  background: var(--second-Feedback-Bckg-Color);
+  &:focus-visible {
+    outline: none;
   }
 `;
 
-export const CancelButton = styled.button`
+export const ReviewBtnWrapper = styled.div`
+  display: flex;
+  gap: 10px;
+`;
+
+const ReviewBtn = styled.button`
+  padding: 8px 20px 8px 20px;
   width: 100%;
-  padding: 12px auto;
-
-  font-family: ${globalTheme.fonts.fontsText};
-  font-size: 14px;
-  font-weight: 600;
-  line-height: 1.28;
-
-  border: none;
+  height: 42px;
   border-radius: 8px;
+  border: none;
   cursor: pointer;
-
-  color: ${props => props.theme.colors.secondText};
-  background-color: ${props => props.theme.colors.backgroundButton};
-
+  transition: all 0.3s;
   &:hover {
-    color: ${globalTheme.colors.white};
-    background-color: ${globalTheme.colors.secondary};
-    box-shadow: ${globalTheme.shadow.modalHoverShadow};
+    box-shadow: 2px 2px 2px 1px rgba(62, 133, 243, 0.4);
+    transform: scale(1.05);
   }
+`;
+
+export const MainReviewBtn = styled(ReviewBtn)`
+  background: #3e85f3;
+  color: #fff;
+`;
+
+export const CancelReviewBtn = styled(ReviewBtn)`
+  background: var(--second-Bckg-Btn-color);
+  color: #343434;
+`;
+
+export const EditBtnWrapper = styled.div`
+  position: absolute;
+  display: flex;
+  gap: 8px;
+  top: -8px;
+  right: 0;
+`;
+
+export const EditBtn = styled.button`
+  display: flex;
+  width: 30px;
+  height: 30px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  border: none;
+  transition: all 0.3s;
+  cursor: pointer;
+  &:hover {
+    box-shadow: 0px 1px 2px 1px rgba(62, 133, 243, 0.1),
+      0px -1px 2px 1px rgba(62, 133, 243, 0.1),
+      1px 0px 2px 1px rgba(62, 133, 243, 0.1),
+      -1px 0px 2px 1px rgba(62, 133, 243, 0.1);
+    transform: scale(1.05);
+  }
+`;
+
+export const DeleteBtn = styled(EditBtn)`
+  cursor: pointer;
+  background: rgba(234, 61, 101, 0.2);
+`;
+
+export const ErrorBox = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 30px;
+`;
+
+export const ErrorWrapper = styled.div`
+  font-size: 16px;
+  line-height: 18px;
+  color: red;
+`;
+
+export const VectorWhite = styled.svg`
+  width: 16px;
+  height: 16px;
+  fill: #fff;
+`;
+
+export const VectorBlue = styled.svg`
+  width: 16px;
+  height: 16px;
+  fill: #3e85f3;
+`;
+
+export const VectorPink = styled.svg`
+  width: 16px;
+  height: 16px;
+  fill: #ea3d65;
 `;

@@ -1,64 +1,29 @@
-import styled from 'styled-components';
-import { ReactComponent as CloseIconBtn } from '../../icons/x-close.svg';
-import { globalTheme } from 'theme';
+import { styled } from 'styled-components';
 
-export const Backdrop = styled.div`
+export const ModalBackdrop = styled.div`
   position: fixed;
   top: 0;
   left: 0;
-  width: 100vw;
+  width: 100%;
   height: 100vh;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  z-index: 1200;
-
-  background-color: ${globalTheme.colors.backdrop};
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 5;
 `;
 
-export const ModalField = styled.div`
-  position: relative;
+export const ModalContent = styled.div`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   width: 335px;
-  min-height: 155px;
-  padding: 20px;
-
+  min-height: 290px;
   border-radius: 8px;
-
-  background-color: ${props => props.theme.colors.modalWindow};
-
+  border: 1px solid var(--modal-border-solid-color);
+  box-shadow: var(--modal-box-shadow-color);
+  padding: 20px;
+  background-color: var(--first-Feedback-Bckg-Color);
   @media screen and (min-width: 768px) {
     width: 468px;
-    padding: 35px;
+    padding: 32px;
   }
-`;
-
-export const CloseButton = styled.button`
-  position: absolute;
-  top: 14px;
-  right: 14px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  padding: 0;
-
-  cursor: pointer;
-  border: none;
-
-  background-color: transparent;
-
-  @media screen and (min-width: 768px) {
-    top: 18px;
-    right: 18px;
-  }
-`;
-
-export const IconBtn = styled(CloseIconBtn)`
-  width: 100%;
-  height: 100%;
-
-  color: ${props => props.theme.colors.primaryText};
 `;
