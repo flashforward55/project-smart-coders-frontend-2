@@ -3,7 +3,6 @@ import {
   register,
   login,
   logout,
-  /*   refreshCurrentUser, */
   currentUser,
   updateUser,
 } from './operations';
@@ -11,7 +10,7 @@ import {
 const initialState = {
   user: null,
   token: null,
-  /*   refreshToken: null, */
+
   isLoading: true,
   error: '',
 };
@@ -28,7 +27,6 @@ const handleRejected = (state, { payload }) => {
 
 const handleFulfilledUser = (state, { payload }) => {
   state.isLoading = false;
-  /*   state.refreshToken = payload.token; */
   const { token, ...user } = payload.user;
   state.user = user;
   state.token = payload.token;
@@ -41,12 +39,10 @@ const authSlice = createSlice({
     logoutReset(state) {
       state.user = null;
       state.token = null;
-      /*       state.refreshToken = null; */
       state.isLoading = true;
     },
 
     currentToken(state, { payload }) {
-      /*       state.refreshToken = payload.token; */
       state.token = payload.token;
     },
   },
@@ -58,7 +54,6 @@ const authSlice = createSlice({
       })
       .addCase(currentUser.fulfilled, (state, { payload }) => {
         state.isLoading = false;
-        /* state.refreshToken = payload.token; */
         const { token, ...user } = payload.user;
         state.user = user;
       })

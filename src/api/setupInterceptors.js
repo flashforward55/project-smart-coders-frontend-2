@@ -1,8 +1,7 @@
 import { toast } from 'react-hot-toast';
-/* import axiosInstance from './api'; */
 import { logoutReset, currentToken } from 'redux/auth/slice';
 import axios from 'axios';
-axios.defaults.baseURL = 'http://localhost:8000/';
+axios.defaults.baseURL = 'https://project-smart-coders-backend-2.onrender.com';
 
 function configureAxios({ getState, dispatch }) {
   axios.interceptors.request.use(
