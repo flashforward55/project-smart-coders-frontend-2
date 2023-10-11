@@ -1,8 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { toast } from 'react-hot-toast';
-/* import api from '../../api/api'; */
 import axios from 'axios';
-axios.defaults.baseURL = 'http://localhost:8000/';
+axios.defaults.baseURL = 'https://project-smart-coders-backend-2.onrender.com';
 
 const handleResponse = (response, errorMessage) => {
   if (response.status !== 200) {

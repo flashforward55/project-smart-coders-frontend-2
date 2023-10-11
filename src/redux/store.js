@@ -18,7 +18,7 @@ import { tasksReducer } from './tasks/slice';
 const authPersistConfig = {
   key: 'auth',
   storage,
-  whitelist: ['token' /* 'refreshToken'] */],
+  whitelist: ['token'],
 };
 
 const reviewPersistConfig = {

@@ -1,7 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 /* import api from 'api/api'; */
 import axios from 'axios';
-axios.defaults.baseURL = 'http://localhost:8000/';
+axios.defaults.baseURL = 'https://project-smart-coders-backend-2.onrender.com';
 
 export const getReview = createAsyncThunk(
   'reviews/get',

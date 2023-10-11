@@ -1,6 +1,5 @@
-/* import api from './api'; */
 import axios from 'axios';
-axios.defaults.baseURL = 'http://localhost:8000/';
+axios.defaults.baseURL = 'https://project-smart-coders-backend-2.onrender.com';
 
 const accessToken = {
   set(token) {
