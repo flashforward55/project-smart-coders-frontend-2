@@ -1,9 +1,9 @@
-<a href="https://svrphoenix.github.io/project-group3fe" target="_blank" rel="noopener">
+<a href="https://github.com/flashforward55/project-smart-coders-frontend-2" target="_blank" rel="noopener">
 	<img src="./src/images/logo/GOOSE@2.png" alt="GooseTrack logo" height="120" width="120" />
 </a>
 
 Цей проєкт містить frontend частину веб-застосунку
-[планувальника завдань GooseTrack](https://svrphoenix.github.io/project-group3fe).
+[планувальника завдань GooseTrack](https://github.com/flashforward55/project-smart-coders-frontend-2).
 
 > Застосунок GooseTrack забезпечує планування розкладу, створення та сортування
 > завдань за пріоритетом і статусом, а також отримання статистики
@@ -19,13 +19,13 @@
 1. **Клонуйте репозиторій** Відкрийте термінал та виконайте команду:
 
    ```sh
-   git clone https://github.com/svrphoenix/project-group3fe.git
+   git clone https://github.com/flashforward55/project-smart-coders-frontend-2.git
    ```
 
 2. **Перейдіть до папки проєкту** Перейдіть до створеної папки репозиторію:
 
    ```sh
-   cd project-group3fe
+   cd project-smart-coders-frontend-2
    ```
 
 3. **Встановіть залежності** Використовуйте npm для встановлення необхідних
@@ -64,9 +64,9 @@
 ### Репозиторій backend частини
 
 Перевірити код backend частини застосунку можна у:
-[backend репозиторії GooseTrack](https://github.com/svrphoenix/project-group3be).
+[backend репозиторії GooseTrack](https://github.com/flashforward55/project-smart-coders-backend-2).
 
 ### Документація API
 
 Ознайомитися з ендпоінтами API можна за допомогою Swagger UI:
-[документація API застосунку GooseTrack](https://goose-backend.onrender.com/docs/).
+[документація API застосунку GooseTrack](https://project-smart-coders-backend.onrender.com/docs/).

@@ -1,11 +1,11 @@
-<a href="https://svrphoenix.github.io/project-group3fe" target="_blank" rel="noopener">
+<a href="https://github.com/flashforward55/project-smart-coders-frontend-2" target="_blank" rel="noopener">
 	<img src="./src/images/logo/GOOSE@2.png" alt="GooseTrack logo" height="60" width="60" />
 </a>
 
 # GooseTrack project frontend repository
 
 This project contains the frontend part of the web application
-[GooseTrack Task Planner](https://svrphoenix.github.io/project-group3fe).
+[GooseTrack Task Planner](https://github.com/flashforward55/project-smart-coders-frontend-2).
 
 > The GooseTrack application provides scheduling, task creation, sorting by
 > priority and status, as well as productivity statistics. GooseTrack offers
@@ -20,7 +20,7 @@ follow these steps:
 1. **Clone the repository** Open your terminal and execute the command:
 
    ```sh
-    git clone https://github.com/svrphoenix/project-group3fe.git
+    git clone https://github.com/flashforward55/project-smart-coders-frontend-2.git
    ```
 
 2. **Navigate to the project folder** Change to the created repository folder:
@@ -64,9 +64,9 @@ You can view the application design mockup at:
 ### Backend Repository
 
 Check out the backend code at:
-[GooseTrack Backend Repository](https://github.com/svrphoenix/project-group3be)
+[GooseTrack Backend Repository](https://github.com/flashforward55/project-smart-coders-backend-2)
 
 ### API Documentation
 
 Explore the API endpoints using Swagger UI:
-[GooseTrack API Documentation](https://goose-backend.onrender.com/docs/)
+[GooseTrack API Documentation](https://project-smart-coders-backend.onrender.com/docs/)
