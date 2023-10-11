@@ -2,7 +2,7 @@
   "name": "project-smart-coders-frontend-2",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://github.com/flashforward55/project-smart-coders-frontend-2/",
+    "homepage": "https://flashforward55.github.io/project-smart-coders-frontend-2/",
   "dependencies": {
     "@mui/icons-material": "^5.14.3",
     "@mui/material": "^5.14.5",
