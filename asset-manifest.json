@@ -1,10 +1,10 @@
 {
   "files": {
     "main.css": "/project-smart-coders-frontend-2/static/css/main.cd301205.css",
-    "main.js": "/project-smart-coders-frontend-2/static/js/main.d5dc943a.js",
+    "main.js": "/project-smart-coders-frontend-2/static/js/main.e4e59810.js",
     "static/js/82.5edcdde6.chunk.js": "/project-smart-coders-frontend-2/static/js/82.5edcdde6.chunk.js",
     "static/css/574.f47b19a2.chunk.css": "/project-smart-coders-frontend-2/static/css/574.f47b19a2.chunk.css",
-    "static/js/574.edcaa9f5.chunk.js": "/project-smart-coders-frontend-2/static/js/574.edcaa9f5.chunk.js",
+    "static/js/574.18ffa0ff.chunk.js": "/project-smart-coders-frontend-2/static/js/574.18ffa0ff.chunk.js",
     "static/js/858.81b1fca6.chunk.js": "/project-smart-coders-frontend-2/static/js/858.81b1fca6.chunk.js",
     "static/js/892.cc0133fb.chunk.js": "/project-smart-coders-frontend-2/static/js/892.cc0133fb.chunk.js",
     "static/js/705.7d57073a.chunk.js": "/project-smart-coders-frontend-2/static/js/705.7d57073a.chunk.js",
@@ -62,10 +62,10 @@
     "static/media/chevron-left.svg": "/project-smart-coders-frontend-2/static/media/chevron-left.53fa2530b71876c38cc132ea7dcdcaa4.svg",
     "static/media/chevron-right.svg": "/project-smart-coders-frontend-2/static/media/chevron-right.46dce977f502a466f517ffedbf68a8ea.svg",
     "main.cd301205.css.map": "/project-smart-coders-frontend-2/static/css/main.cd301205.css.map",
-    "main.d5dc943a.js.map": "/project-smart-coders-frontend-2/static/js/main.d5dc943a.js.map",
+    "main.e4e59810.js.map": "/project-smart-coders-frontend-2/static/js/main.e4e59810.js.map",
     "82.5edcdde6.chunk.js.map": "/project-smart-coders-frontend-2/static/js/82.5edcdde6.chunk.js.map",
     "574.f47b19a2.chunk.css.map": "/project-smart-coders-frontend-2/static/css/574.f47b19a2.chunk.css.map",
-    "574.edcaa9f5.chunk.js.map": "/project-smart-coders-frontend-2/static/js/574.edcaa9f5.chunk.js.map",
+    "574.18ffa0ff.chunk.js.map": "/project-smart-coders-frontend-2/static/js/574.18ffa0ff.chunk.js.map",
     "858.81b1fca6.chunk.js.map": "/project-smart-coders-frontend-2/static/js/858.81b1fca6.chunk.js.map",
     "892.cc0133fb.chunk.js.map": "/project-smart-coders-frontend-2/static/js/892.cc0133fb.chunk.js.map",
     "705.7d57073a.chunk.js.map": "/project-smart-coders-frontend-2/static/js/705.7d57073a.chunk.js.map",
@@ -81,6 +81,6 @@
   },
   "entrypoints": [
     "static/css/main.cd301205.css",
-    "static/js/main.d5dc943a.js"
+    "static/js/main.e4e59810.js"
   ]
 }
