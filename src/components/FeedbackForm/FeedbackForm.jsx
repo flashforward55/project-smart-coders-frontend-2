@@ -1,151 +1,169 @@
+import { useDispatch, useSelector } from 'react-redux';
+import { selectError, selectUserReview } from 'redux/review/selectors';
+import * as reviewOperations from 'redux/review/operations';
 import { useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { Formik, Field, ErrorMessage } from 'formik';
+import * as Yup from 'yup';
+import { StarRating } from './StarRating';
+import AddSvg from 'components/AddSvg/AddSvg';
+import getSvg from 'utils/getSvg';
+import * as SC from './FeedbackForm.styled';
 
-import { AiFillStar } from 'react-icons/ai';
-import ReactStars from 'react-rating-stars-component';
-import { Formik, Field } from 'formik';
-import { Notify } from 'notiflix';
-
-import { FeedbackValidSchema } from './FeedbackValidScheme';
-import { selectUser } from 'redux/auth/selectors';
-import {
-  createReview,
-  updateReview,
-  deleteReview,
-} from 'redux/reviews/operations';
-
-import { ReactComponent as Pencil } from '../../icons/pencil.svg';
-import { ReactComponent as TrashBox } from '../../icons/trash-box-with-line.svg';
-import * as s from './FeedbackForm.styled';
-
-const FeedbackForm = ({ onClose, showSaveBtnRew, ratingRew, reviewRew }) => {
+export const FeedbackForm = ({ close }) => {
+  const currentUser = useSelector(selectUserReview);
+  const error = useSelector(selectError);
   const dispatch = useDispatch();
 
-  const currentUser = useSelector(selectUser);
+  const SVG = getSvg();
 
-  const [showEditBtn, setShowEditBtn] = useState(false);
-  const showSaveBtn = showSaveBtnRew || false;
+  const [readOnly, setReadOnly] = useState(!!currentUser.comment);
 
-  const [rating, setRating] = useState(ratingRew);
-  const review = reviewRew;
-
-  const starsConfig = {
-    size: 24,
-    count: 5,
-    isHalf: false,
-    edit: true,
-    value: rating,
-    color: '#CEC9C1',
-    activeColor: '#FFAC33',
-    emptyIcon: <AiFillStar size={24} />,
-    filledIcon: <AiFillStar size={24} />,
-    onChange: newValue => setRating(newValue),
-  };
-
-  const handleSubmit = (values, { resetForm }) => {
-    if (showSaveBtn) {
-      dispatch(createReview({ rating, comment: values.review.trim() }))
-        .then(() => {
-          Notify.success('Review created');
-          resetForm();
-          onClose();
-        })
-        .catch(error => {
-          Notify.failure(`${error.message}`);
-        });
-    }
-
-    if (showEditBtn) {
-      dispatch(updateReview({ rating, comment: values.review.trim() }))
-        .then(() => {
-          Notify.success('Review updated');
-          resetForm();
-          onClose();
-        })
-        .catch(error => {
-          Notify.failure(`${error.message}`);
-        });
+  const checkErrorForCloseModal = ({ meta }) => {
+    if (meta.requestStatus === 'fulfilled') {
+      close();
     }
   };
 
-  const handleEdit = () => {
-    setShowEditBtn(true);
+  const onSubmitFeedback = values => {
+    const credentials = {
+      comment: values.comment,
+      rating: values.rating,
+    };
+
+    if (!currentUser.comment) {
+      dispatch(reviewOperations.postReview(credentials)).then(
+        checkErrorForCloseModal
+      );
+    } else {
+      dispatch(reviewOperations.updateReview(credentials)).then(
+        checkErrorForCloseModal
+      );
+    }
   };
 
-  const handleDelete = () => {
-    dispatch(deleteReview(currentUser._id))
-      .then(() => {
-        Notify.success('Review deleted');
-        onClose();
-      })
-      .catch(error => {
-        Notify.failure(`${error.message}`);
-      });
+  const onDeleteReview = () => {
+    dispatch(reviewOperations.deleteReview()).then(checkErrorForCloseModal);
+  };
+
+  const reloadPage = () => {
+    // eslint-disable-next-line no-restricted-globals
+    location.reload();
+  };
+
+  const FeedbackSchema = Yup.object().shape({
+    comment: Yup.string()
+      .min(10, 'Too short message!')
+      .max(300, 'Too long message!')
+      .required("You haven't written anything"),
+    rating: Yup.number().min(1).max(5).required(),
+  });
+
+  const initialValues = {
+    comment: currentUser.comment,
+    rating: currentUser.rating,
   };
 
   return (
-    <Formik
-      initialValues={{ rating, review }}
-      validationSchema={FeedbackValidSchema}
-      onSubmit={handleSubmit}
-    >
-      {({ errors }) => (
-        <s.FormWrapper autoComplete="off">
-          <div>
-            <s.Label htmlFor="rating">Rating </s.Label>
-            <ReactStars {...starsConfig} />
-          </div>
-          <s.ReviewContainer>
-            <s.ContainerLabelAndBtn>
-              <s.Label htmlFor="review">Review</s.Label>
-
-              {!showSaveBtn ? (
-                <s.UpContainerButton>
-                  <s.EditButton
-                    type="button"
-                    onClick={handleEdit}
-                    data-active={showEditBtn}
-                  >
-                    <Pencil />
-                  </s.EditButton>
-                  <s.DeleteButton type="button" onClick={handleDelete}>
-                    <TrashBox />
-                  </s.DeleteButton>
-                </s.UpContainerButton>
-              ) : null}
-            </s.ContainerLabelAndBtn>
-            <s.ReviewInput
-              name="review"
-              placeholder="Enter text"
-              as={Field}
-              component="textarea"
-              error={!!errors.review ? 'true' : undefined}
-              required
-            />
-            <s.ErrorContainer name="review" component="div" />
-          </s.ReviewContainer>
-
-          {showSaveBtn ? (
-            <s.DownContainerButton>
-              <s.ConfirmButton type="submit">Save</s.ConfirmButton>
-              <s.CancelButton type="button" onClick={onClose}>
-                Cancel
-              </s.CancelButton>
-            </s.DownContainerButton>
-          ) : null}
-
-          {showEditBtn ? (
-            <s.DownContainerButton>
-              <s.ConfirmButton type="submit">Edit</s.ConfirmButton>
-              <s.CancelButton type="button" onClick={onClose}>
-                Cancel
-              </s.CancelButton>
-            </s.DownContainerButton>
-          ) : null}
-        </s.FormWrapper>
-      )}
-    </Formik>
+    <>
+      <Formik
+        initialValues={initialValues}
+        validationSchema={FeedbackSchema}
+        onSubmit={onSubmitFeedback}
+        validateOnChange={false}
+      >
+        {({ values, setFieldValue }) => {
+          return !error ? (
+            <SC.FeedbackForm>
+              <SC.Label>
+                Raiting
+                <StarRating
+                  name="rating"
+                  isSelectable={!readOnly}
+                  rating={values.rating}
+                  setRating={setFieldValue}
+                />
+              </SC.Label>
+              <SC.Label htmlFor="reviewTextAreaId">
+                {currentUser.comment && (
+                  <SC.EditBtnWrapper>
+                    <SC.EditBtn
+                      type="button"
+                      style={{
+                        backgroundColor: readOnly ? '#e5edfa' : '#3e85f3',
+                      }}
+                      onClick={() => setReadOnly(false)}
+                      aria-label="Edit review"
+                    >
+                      {readOnly ? (
+                        <AddSvg
+                          component={SC.VectorBlue}
+                          sprite={SVG}
+                          spriteId={'pencil-icon'}
+                        />
+                      ) : (
+                        <AddSvg
+                          component={SC.VectorWhite}
+                          sprite={SVG}
+                          spriteId={'pencil-icon'}
+                        />
+                      )}
+                    </SC.EditBtn>
+                    <SC.DeleteBtn
+                      type="button"
+                      onClick={onDeleteReview}
+                      aria-label="Delete review"
+                    >
+                      <AddSvg
+                        component={SC.VectorPink}
+                        sprite={SVG}
+                        spriteId={'trash-second-icon'}
+                      />
+                    </SC.DeleteBtn>
+                  </SC.EditBtnWrapper>
+                )}
+                Review
+                <Field
+                  id="reviewTextAreaId"
+                  name="comment"
+                  as={SC.Textarea}
+                  rows={6}
+                  cols={40}
+                  placeholder="Enter text"
+                  maxLength={300}
+                  readOnly={readOnly}
+                />
+                <SC.ErrorBox>
+                  <SC.ErrorWrapper>
+                    <ErrorMessage name="comment" />
+                  </SC.ErrorWrapper>
+                  <SC.ErrorWrapper>
+                    <ErrorMessage name="rating" />
+                  </SC.ErrorWrapper>
+                </SC.ErrorBox>
+              </SC.Label>
+              {!readOnly && (
+                <SC.ReviewBtnWrapper>
+                  {!currentUser.comment ? (
+                    <SC.MainReviewBtn type="submit">Save</SC.MainReviewBtn>
+                  ) : (
+                    <SC.MainReviewBtn type="submit">Edit</SC.MainReviewBtn>
+                  )}
+                  <SC.CancelReviewBtn type="button" onClick={close}>
+                    Cancel
+                  </SC.CancelReviewBtn>
+                </SC.ReviewBtnWrapper>
+              )}
+            </SC.FeedbackForm>
+          ) : (
+            <SC.ErrorBox>
+              <h1>Something was wrong</h1>
+              <SC.MainReviewBtn type="submit" onClick={reloadPage}>
+                Reload
+              </SC.MainReviewBtn>
+            </SC.ErrorBox>
+          );
+        }}
+      </Formik>
+    </>
   );
 };
-
-export default FeedbackForm;

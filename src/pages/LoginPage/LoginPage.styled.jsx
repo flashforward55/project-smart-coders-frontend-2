@@ -1,40 +1,35 @@
 import styled from 'styled-components';
-import { globalTheme } from 'theme';
-// import { Container } from 'stylesheet/Container.styled';
 
-export const Section = styled.section`
+export const StyledLayout = styled.div`
+  margin: 0 auto;
+  width: 100%;
   height: 100vh;
-`;
-
-// export const ContainerModific = styled(Container)`
-//   display: flex;
-//   justify-content: center;
-//   align-items: center;
-
-//   height: 100%;
-// `;
-
-export const AuthContainer = styled.div`
-  position: relative;
-  min-height: 100vh;
-
-  display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-
-  background-color: ${globalTheme.colors.bgBlue};
+  background: var(--LogReg-Bckg-Color);
+  position: relative;
 `;
 
-export const AuthImageContainer = styled.div`
-  display: none;
+export const StyledSharedContainer = styled.div`
+  position: absolute;
+  top: 50%;              
+  left: 50%;         
+  width: 100%;
+  padding: 0 15px;       
+  transform: translate(-50%, -50%);
+  margin: 0 auto;
+`
 
-  @media (min-width: 1280px) {
-    display: block;
-    position: absolute;
-    width: 368px;
-    height: 521px;
-    bottom: 19px;
-    right: 60px;
+export const StyledPicture = styled.picture`
+  position: absolute;
+  bottom: 19px;
+  right: 60px;
+`
+
+export const StyledImg = styled.img`
+  display:none;
+  @media (min-width: 1440px) {
+    display:block;
   }
-`;
+`

@@ -1,251 +1,201 @@
-import React, { useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import 'react-datepicker/dist/react-datepicker.css';
+import { Formik } from 'formik';
+import * as Yup from 'yup';
+import {
+  FormField,
+  Field,
+  StyledFormWrapper,
+  Form,
+  StyledUserName,
+  StyledUserDiscription,
+  StyledLabelText,
+  StyledLabelWrapp,
+  StyledBtn,
+  StyledDatePicker,
+  StyledCalendar,
+  Column,
+  ErrorMessage,
+  StyledErrorText,
+  FileInputLabel,
+} from './UserForm.styled';
+import FileUploadComponent from './FileUploadComponent';
+import { useEffect, useRef, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import useAuth from 'hooks/useAuth';
+import { updateUser } from 'redux/auth/operations';
+import { ChevronDownIcon } from './Icons';
+import { toast } from 'react-hot-toast';
 
-import dayjs from 'dayjs';
-import { Notify } from 'notiflix';
-import { Formik, ErrorMessage } from 'formik';
-import { LocalizationProvider } from '@mui/x-date-pickers';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+const UserSchema = Yup.object().shape({
+  avatar: Yup.string().nullable(),
+  name: Yup.string()
+    .min(3, 'minimum 3 letters')
+    .max(20)
+    .required('Please enter your name'),
+  birthday: Yup.string().matches(
+    /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[01])$/,
+    'Please use format yyyy-mm-dd'
+  ),
+  email: Yup.string()
+    .matches(
+      /^[a-z0-9]+@[a-z]+\.[a-z]{2,3}$/,
+      'Please use format example@gmail.com'
+    )
+    .required('Please enter your email'),
+  phone: Yup.string().matches(
+    /^(\+\d{1,3}|\d{1,3}) \(\d{3}\) \d{3} \d{2} \d{2}$/,
+    'Please use format 38 (097) 256 34 77'
+  ),
+  skype: Yup.string().matches(
+    /^(\+\d{1,3}|\d{1,3}) \(\d{3}\) \d{3} \d{2} \d{2}$/,
+    'Please use  format 38 (097) 256 34 77'
+  ),
+});
 
-import { UserValidSchema } from './UserValidSchema';
-import { updateUser } from '../../redux/user/operations';
-import { selectUser } from '../../redux/auth/selectors';
-import { refresh } from 'redux/auth/authOperations';
-
-import * as S from './UserForm.styled';
-import { DatePickerStyled, PopperDateStyles } from './DatePicker.styled';
-
-const currentDate = dayjs(new Date()).format('YYYY-MM-DD');
-
-const UserForm = () => {
+export const UserForm = () => {
+  const { user, error } = useAuth();
   const dispatch = useDispatch();
-  const userInfo = useSelector(selectUser);
-  const [avatarURL, setAvatarURL] = useState(null);
-  const [isFormChanged, setIsFormChanged] = useState(false);
 
-  const handleSubmit = async values => {
-    const formData = new FormData();
-    formData.append('name', values.name);
-    formData.append('email', values.email);
-    if (values.phone) {
-      formData.append('phone', values.phone);
-    }
-    if (values.skype) {
-      formData.append('skype', values.skype);
-    }
-    formData.append('birthday', dayjs(values.birthday).format('YYYY-MM-DD'));
+  const [startDate, setStartDate] = useState(
+    new Date(user.birthday) || new Date()
+  );
+  const [userAvatar, setUserAvatar] = useState(null);
+  const [formChanged, setFormChanged] = useState(false);
+  const [userAvatarUrl, setuserAvatarUrl] = useState(user.avatarURL || '/');
 
-    if (avatarURL) {
-      formData.append('avatar', avatarURL);
-    }
+  const form = useRef(null);
+  const fileListRef = useRef(null);
 
-    try {
-      await dispatch(updateUser(formData));
-      await dispatch(refresh());
-      Notify.success('Profile data changed successfully');
-    } catch {
-      Notify.failure('Something went wrong... Try again!');
-    }
+  const todayDate = startDate.toISOString().slice(0, 10);
+
+  const handleFormChange = () => {
+    setFormChanged(true);
   };
 
+  const handleFiles = event => {
+    const files = event.target.files;
+    handleFormChange();
+
+    setUserAvatar(event.currentTarget.files[0]);
+    setuserAvatarUrl(window.URL.createObjectURL(files[0]));
+  };
+
+  useEffect(() => {
+    const formFields = form.current.querySelectorAll('input');
+    const formFieldsArray = Array.from(formFields);
+
+    const fieldChangeHandler = () => {
+      setFormChanged(true);
+    };
+
+    formFieldsArray.forEach(field => {
+      field.addEventListener('change', fieldChangeHandler);
+    });
+
+    return () => {
+      formFieldsArray.forEach(field => {
+        field.removeEventListener('change', fieldChangeHandler);
+      });
+    };
+  }, [user.name, startDate, user.email, user.phone, user.skype]);
+
   return (
-    <>
-      <S.WrapperForm>
-        <Formik
-          validationSchema={UserValidSchema}
-          initialValues={{
-            name: userInfo.name || '',
-            birthday: userInfo.birthday || `${currentDate}`,
-            email: userInfo.email || '',
-            phone: userInfo.phone || '',
-            skype: userInfo.skype || '',
-          }}
-          onSubmit={handleSubmit}
-        >
-          {({
-            // values,
-            setFieldValue,
-            dirty,
-            // isSubmitting,
-            touched,
-            errors,
-          }) => (
-            <S.Form>
-              <div>
-                <S.AvatarWrapper>
-                  {avatarURL ? (
-                    <label htmlFor="avatar">
-                      <S.ImgAvatar
-                        src={URL.createObjectURL(avatarURL)}
-                        alt="Avatar"
-                      />
-                    </label>
-                  ) : userInfo.avatarURL ? (
-                    <label htmlFor="avatar">
-                      <S.ImgAvatar src={userInfo.avatarURL} alt="Avatar" />
-                    </label>
-                  ) : (
-                    <S.AvatarDefault />
-                  )}
-                </S.AvatarWrapper>
-                <S.FieldAdd
-                  id="avatar"
-                  name="avatar"
-                  type="file"
-                  accept="image/*, .png,.jpg, .gif"
-                  onChange={e => {
-                    setAvatarURL(e.target.files[0]);
-                    setIsFormChanged(true);
-                  }}
-                />
-                <label htmlFor="avatar">
-                  <S.AddIcon />
-                </label>
-              </div>
-              <S.UserTitle>{userInfo.name || '****'}</S.UserTitle>
-              <S.Title>User</S.Title>
-              <S.UserWrapper>
-                <S.UserInfo>
-                  <S.Labels
-                    style={{
-                      color:
-                        (touched.avatar && errors.avatar && '#E74A3B') ||
-                        (touched.avatar && !errors.avatar && '#3CBC81'),
-                    }}
-                  >
-                    <p>User Name</p>
-                    <S.IconStatusBox>
-                      <S.InputInfo
-                        name="name"
-                        id="name"
-                        type="text"
-                        placeholder="Your name"
-                        style={{
-                          borderColor:
-                            (touched.name && errors.name && '#E74A3B') ||
-                            (touched.name && !errors.name && '#3CBC81'),
-                        }}
-                      />
-                      {touched.name && errors.name && <S.ErrorIcon />}
-                      {touched.name && !errors.name && <S.CorrectIcon />}
-                    </S.IconStatusBox>
-                    <ErrorMessage name="name" component="span" />
-                  </S.Labels>
-
-                  <S.Labels>
-                    Birthday
-                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                      <DatePickerStyled
-                        name="birthday"
-                        id="birthday"
-                        type="date"
-                        style={{
-                          borderColor:
-                            (touched.birthday &&
-                              errors.birthday &&
-                              '#E74A3B') ||
-                            (touched.birthday && !errors.birthday && '#3CBC81'),
-                        }}
-                        slotProps={{
-                          popper: {
-                            sx: PopperDateStyles,
-                          },
-                          textField: {
-                            placeholder: userInfo.birthday || `${currentDate}`,
-                          },
-                        }}
-                        views={['year', 'month', 'day']}
-                        format="YYYY-MM-DD"
-                        closeOnSelect={true}
-                        disableFuture={true}
-                        onChange={newDate => {
-                          setFieldValue(
-                            'birthday',
-                            dayjs(newDate).format('YYYY-MM-DD')
-                          );
-                        }}
-                      />
-                    </LocalizationProvider>
-                  </S.Labels>
-                  <div>
-                    <S.Labels>
-                      Email
-                      <S.InputInfo
-                        name="email"
-                        type="email"
-                        id="email"
-                        placeholder="Your email"
-                      />
-                      <ErrorMessage name="email" component="span" />
-                    </S.Labels>
-                  </div>
-                </S.UserInfo>
-
-                <S.UserInfo>
-                  <S.Labels
-                    style={{
-                      borderColor:
-                        (touched.email && errors.email && '#E74A3B') ||
-                        (touched.email && !errors.email && '#3CBC81'),
-                    }}
-                  >
-                    Phone
-                    <S.IconStatusBox>
-                      <S.InputInfo
-                        name="phone"
-                        id="phone"
-                        type="tel"
-                        style={{
-                          borderColor:
-                            (touched.phone && errors.phone && '#E74A3B') ||
-                            (touched.phone && !errors.phone && '#3CBC81'),
-                        }}
-                      />
-                      {touched.phone && errors.phone && <S.ErrorIcon />}
-                      {touched.phone && !errors.phone && <S.CorrectIcon />}
-                    </S.IconStatusBox>
-                    <ErrorMessage name="phone" component="span" />
-                  </S.Labels>
-
-                  <S.Labels
-                    style={{
-                      color:
-                        (touched.skype && errors.skype && '#E74A3B') ||
-                        (touched.skype && !errors.skype && '#3CBC81'),
-                    }}
-                  >
-                    Skype
-                    <S.IconStatusBox>
-                      <S.InputInfo
-                        name="skype"
-                        id="skype"
-                        type="text"
-                        placeholder="Add a skype number"
-                        style={{
-                          borderColor:
-                            (touched.skype && errors.skype && '#E74A3B') ||
-                            (touched.skype && !errors.skype && '#3CBC81'),
-                        }}
-                      />
-                      {touched.skype && errors.skype && <S.ErrorIcon />}
-                      {touched.skype && !errors.skype && <S.CorrectIcon />}
-                    </S.IconStatusBox>
-                    <ErrorMessage name="skype" component="span" />
-                  </S.Labels>
-                </S.UserInfo>
-              </S.UserWrapper>
-
-              <S.ButtonWrapper>
-                <S.ControlBtn type="submit" disabled={!dirty && !isFormChanged}>
-                  Save changes
-                </S.ControlBtn>
-              </S.ButtonWrapper>
-            </S.Form>
+    <StyledFormWrapper>
+      <Formik
+        initialValues={{
+          avatar: userAvatar,
+          name: user.name,
+          birthday: todayDate || user.birthday,
+          email: user.email,
+          phone: user.phone || '',
+          skype: user.skype || '',
+        }}
+        validationSchema={UserSchema}
+        validateOnChange={true}
+        onSubmit={async (values, { setSubmitting }) => {
+          if (formChanged) {
+            const data = new FormData(form.current);
+            dispatch(updateUser(data));
+            toast.success('Data updated successfully!');
+            setFormChanged(false);
+          }
+        }}
+      >
+        <Form ref={form}>
+          <FileInputLabel>
+            <FileUploadComponent
+              handleFiles={handleFiles}
+              fileListRef={fileListRef}
+              userAvatarUrl={userAvatarUrl}
+            />
+          </FileInputLabel>
+          <StyledUserName>{user.name}</StyledUserName>
+          <StyledUserDiscription>User</StyledUserDiscription>
+          {error && (
+            <StyledErrorText>Something went wrong, try again!</StyledErrorText>
           )}
-        </Formik>
-      </S.WrapperForm>
-    </>
+          <StyledLabelWrapp>
+            <Column>
+              <FormField>
+                <StyledLabelText>User Name</StyledLabelText>
+                <Field id="name" name="name" placeholder="Name" />
+                <ErrorMessage name="name" component="div" />
+              </FormField>
+              <StyledCalendar>
+                <StyledLabelText>Birthday</StyledLabelText>
+                <StyledDatePicker
+                  selected={startDate}
+                  onChange={date => {
+                    if (date) {
+                      setStartDate(date);
+                      handleFormChange();
+                    }
+                  }}
+                  dateFormat="yyyy-MM-dd"
+                  name="birthday"
+                  placeholderText="yyyy-mm-dd"
+                />
+                <ChevronDownIcon color="var(--first-Text-Color)" size={18} />
+              </StyledCalendar>
+              <FormField>
+                <StyledLabelText>Email</StyledLabelText>
+                <Field
+                  id="email"
+                  name="email"
+                  placeholder="example.com"
+                  type="email"
+                />
+                <ErrorMessage name="email" component="div" />
+              </FormField>
+            </Column>
+            <Column>
+              <FormField>
+                <StyledLabelText>Phone</StyledLabelText>
+                <Field
+                  id="phone"
+                  name="phone"
+                  placeholder="38 (097) 222 33 77"
+                  type="tel"
+                />
+                <ErrorMessage name="phone" component="div" />
+              </FormField>
+              <FormField>
+                <StyledLabelText>Skype</StyledLabelText>
+                <Field
+                  id="skype"
+                  name="skype"
+                  placeholder="Add a skype number"
+                  type="text"
+                />
+                <ErrorMessage name="skype" component="div" />
+              </FormField>
+            </Column>
+          </StyledLabelWrapp>
+          <StyledBtn type="submit" disabled={!formChanged}>
+            Save changes
+          </StyledBtn>
+        </Form>
+      </Formik>
+    </StyledFormWrapper>
   );
 };
-
-export default UserForm;

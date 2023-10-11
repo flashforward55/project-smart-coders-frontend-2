@@ -1,24 +1,28 @@
-import { RegisterForm } from 'components/RegisterForm/RegisterForm';
+import { IMG } from 'images';
 import { AuthNavigate } from 'components/AuthNavigate/AuthNavigate';
-import { ReactComponent as RegisterGoose } from 'icons/signup-goose.svg';
-import * as s from './RegisterPage.styled';
+import RegisterForm from 'components/RegisterLoginForm/RegisterForm';
+import * as SC from './RegisterPage.styled';
 
-export default function RegisterPage() {
-  const toLogin = '/login';
-
+const RegisterPage = () => {
   return (
-    <s.Section>
-      {/* <s.ContainerModific> */}
-      <s.AuthContainer>
+    <SC.StyledLayout>
+      <SC.StyledSharedContainer>
         <RegisterForm />
-        <AuthNavigate redirect={toLogin} titleLink="Log in" />
-        <s.AuthImageContainer>
-          <RegisterGoose
-            style={{ position: 'absolute', bottom: '0px', left: '0px' }}
-          />
-        </s.AuthImageContainer>
-      </s.AuthContainer>
-      {/* </s.ContainerModific> */}
-    </s.Section>
+        <AuthNavigate path="/login" text="Log In" />
+      </SC.StyledSharedContainer>
+      <SC.StyledPicture>
+        <source
+          srcSet={`${IMG.registerx1} 1x, ${IMG.registerx2} 2x`}
+          type="image/jpg"
+          media="(min-width: 1440px)"
+        />
+        <SC.StyledImg
+          srcSet={`${IMG.registerx1} 1x, ${IMG.registerx2} 2x`}
+          alt="Quickly register and familiarize yourseld with the application!"
+        />
+      </SC.StyledPicture>
+    </SC.StyledLayout>
   );
-}
+};
+
+export default RegisterPage;

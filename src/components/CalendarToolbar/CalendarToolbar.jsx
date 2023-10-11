@@ -1,62 +1,84 @@
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import dayjs from 'dayjs';
+import { useEffect } from 'react';
+import PeriodPaginator from './PeriodPaginator/PeriodPaginator';
+import PeriodTypeSelect from './PeriodTypeSelect/PeriodTypeSelect';
+import * as SC from './CalendarToolbar.styled';
+import { format, addDays, parse } from 'date-fns';
+import { useNavigate, useParams } from 'react-router';
+import { useDispatch } from 'react-redux';
+import { getAllTasks } from 'redux/tasks/operations';
+import { useCalendar } from 'pages/CalendarPage/CalendarProvider';
 
-import { useTasks } from 'hooks/useTasks';
-import { useDate } from 'hooks/useDate';
-
-import { PeriodPaginator } from 'components/PeriodPaginator/PeriodPaginator';
-import { PeriodTypeSelect } from 'components/PeriodTypeSelect/PeriodTypeSelect';
-
-import * as s from './CalendarToolbar.styled';
-
-export const CalendarToolbar = ({ periodType, handleChange }) => {
-  const { choosedDate, setChoosedDate } = useDate();
-  const [date, setDate] = useState(choosedDate);
-  const { getAllTasks } = useTasks();
-
+const CalendarToolbar = () => {
+  const params = useParams();
   const navigate = useNavigate();
-  const monthMod = dayjs(date).format('MM');
-  const yearMod = dayjs(date).format('YYYY');
-  const currentMonthModify = dayjs(date).format('MMMM-YYYY').toLowerCase();
-  const currentDayModify = dayjs(date).format('YYYY-MM-DD').toLowerCase();
+  const dispatch = useDispatch();
+
+  const { currentDate, setCurrentDate } = useCalendar();
+  useEffect(() => {
+    const initialDate = params.currentDate
+      ? parse(params.currentDate, 'yyyy-MM', new Date())
+      : new Date();
+    setCurrentDate(initialDate);
+  }, [setCurrentDate, params.currentDate]);
+
+  const year = currentDate.getFullYear();
+  const month = currentDate.getMonth();
+  const formattedMonth = String(month + 1).padStart(2, '0');
 
   useEffect(() => {
-    setChoosedDate(date);
-  }, [date, setChoosedDate]);
+    dispatch(getAllTasks({ year, month: formattedMonth }));
+  }, [dispatch, year, formattedMonth]);
 
-  useEffect(() => {
-    if (periodType === 'month') {
-      navigate(`/calendar/month/${currentMonthModify}`);
-    } else {
-      navigate(`/calendar/day/${currentDayModify}`);
-    }
-  }, [periodType, currentMonthModify, currentDayModify, navigate]);
+  const formatedDate = params.currentDay
+    ? format(currentDate, 'dd MMMM yyyy')
+    : format(currentDate, 'MMMM yyyy');
 
-  useEffect(() => {
-    getAllTasks({ month: monthMod, year: yearMod });
-  }, [getAllTasks, monthMod, yearMod]);
+  const prevHandleMonth = () => {
+    const prevDate = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth() - 1
+    );
+    setCurrentDate(prevDate);
+    navigate(`/calendar/month/${format(prevDate, 'yyyy-MM')}`);
+  };
 
-  const upDateDate = PlusOrMinus => {
-    if (periodType === 'month') {
-      const newDateMonth = new Date(date);
-      newDateMonth.setMonth(newDateMonth.getMonth() + PlusOrMinus);
-      setDate(newDateMonth);
-    } else {
-      const newDateDay = new Date(date);
-      newDateDay.setDate(newDateDay.getDate() + PlusOrMinus);
-      setDate(newDateDay);
-    }
+  const prevHandleDay = () => {
+    const prevDate = addDays(currentDate, -1);
+    setCurrentDate(prevDate);
+    navigate(`/calendar/day/${format(prevDate, 'yyyy-MM-dd')}`);
+  };
+
+  const nextHandleMonth = () => {
+    const nextDate = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth() + 1
+    );
+    setCurrentDate(nextDate);
+    navigate(`/calendar/month/${format(nextDate, 'yyyy-MM')}`);
+  };
+
+  const nextHandleDay = () => {
+    const nextDate = addDays(currentDate, 1);
+    setCurrentDate(nextDate);
+    navigate(`/calendar/day/${format(nextDate, 'yyyy-MM-dd')}`);
+  };
+  const prevHandler = () => {
+    params.currentDay ? prevHandleDay() : prevHandleMonth();
+  };
+  const nextHandler = () => {
+    params.currentDay ? nextHandleDay() : nextHandleMonth();
   };
 
   return (
-    <s.ToolbarWrapper>
+    <SC.CalendarToolbarWrapper>
       <PeriodPaginator
-        date={date}
-        periodType={periodType}
-        upDateDate={upDateDate}
+        date={formatedDate}
+        prevHandler={prevHandler}
+        nextHandler={nextHandler}
       />
-      <PeriodTypeSelect periodType={periodType} handleChange={handleChange} />
-    </s.ToolbarWrapper>
+      <PeriodTypeSelect />
+    </SC.CalendarToolbarWrapper>
   );
 };
+
+export default CalendarToolbar;
