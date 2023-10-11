@@ -26,7 +26,7 @@ follow these steps:
 2. **Navigate to the project folder** Change to the created repository folder:
 
    ```sh
-   cd project-group3fe
+   cd project-smart-coders-frontend-2
    ```
 
 3. **Install dependencies** Use npm to install the necessary dependencies:
